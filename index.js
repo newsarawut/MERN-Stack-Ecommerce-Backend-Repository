@@ -23,7 +23,7 @@ const orderRouter = require("./routes/Order");
 const { User } = require("./model/User");
 const { isAuth, sanitizeUser, cookieExtractor } = require("./services/common");
 const path = require("path");
-
+const { Order } = require("./model/Order");
 
 // Webhook
 
@@ -49,8 +49,10 @@ server.post(
       case "payment_intent.succeeded":
         const paymentIntentSucceeded = event.data.object;
 
-        const order = await Order.findById(paymentIntentSucceeded.metadata.orderId)
-        order.paymentStatus = 'received';
+        const order = await Order.findById(
+          paymentIntentSucceeded.metadata.orderId
+        );
+        order.paymentStatus = "received";
         await order.save();
 
         break;
@@ -68,7 +70,7 @@ server.post(
 
 const opts = {};
 opts.jwtFromRequest = cookieExtractor;
-opts.secretOrKey = process.env.JWT_SECRET_KEY; 
+opts.secretOrKey = process.env.JWT_SECRET_KEY;
 
 //middlewares
 server.use(express.static(path.resolve(__dirname, "build")));
@@ -97,7 +99,10 @@ server.use("/users", isAuth(), usersRouter.router);
 server.use("/auth", authRouter.router);
 server.use("/cart", isAuth(), cartRouter.router);
 server.use("/orders", isAuth(), orderRouter.router);
-server.get('*', (req, res) => res.sendFile(path.resolve('build', 'index.html')))
+
+server.get("*", (req, res) =>
+  res.sendFile(path.resolve("build", "index.html"))
+);
 
 //Passport Startegies
 passport.use(
@@ -141,7 +146,6 @@ passport.use(
 passport.use(
   "jwt",
   new JwtStrategy(opts, async function (jwt_payload, done) {
-    console.log({ jwt_payload });
     try {
       const user = await User.findById(jwt_payload.id);
       if (user) {
@@ -156,7 +160,6 @@ passport.use(
 );
 //  This create session varible req.user on ceing called from called
 passport.serializeUser(function (user, cb) {
-  console.log("serializze", user);
   process.nextTick(function () {
     return cb(null, { id: user.id, role: user.role });
   });
@@ -180,13 +183,12 @@ server.post("/create-payment-intent", async (req, res) => {
   const paymentIntent = await stripe.paymentIntents.create({
     amount: totalAmount * 100,
     currency: "usd",
-    // In the latest version of the API, specifying the `automatic_payment_methods` parameter is optional because Stripe enables its functionality by default.
     automatic_payment_methods: {
       enabled: true,
     },
     metadata: {
-      orderId
-    }
+      orderId,
+    },
   });
 
   res.send({
@@ -198,7 +200,7 @@ main().catch((err) => console.log(err));
 
 async function main() {
   await mongoose.connect(process.env.MONGODB_URL);
-  console.log("Database conected");
+  console.log("Database connected");
 }
 
 server.listen(process.env.PORT, () => {

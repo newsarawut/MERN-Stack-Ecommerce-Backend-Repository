@@ -24,8 +24,6 @@ exports.cookieExtractor = function (req) {
   if (req && req.cookies) {
     token = req.cookies["jwt"];
   }
-  // token =
-  //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1ZjFkMzcyNmZhMGUxYzAxMTgzOTI1NSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzEwNDc3NDc3fQ.QZK3CrnwVfUSbhmbLVkKZWVT1ek91o-d5D4_7x59GeU";
   return token;
 };
 
