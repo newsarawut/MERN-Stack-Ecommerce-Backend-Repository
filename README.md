@@ -1,4 +1,4 @@
-MERN Stack E-Commerce project - Frontend Repository
+### MERN Stack E-Commerce project - Frontend Repository
 
 Features :
   - Basic E-commerce Features- Product lists, Product Details, Cart, Checkout
